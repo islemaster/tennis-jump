@@ -1,7 +1,7 @@
 # Tennis Jump
 A one-button game for two players. [Play now!](https://islemaster.github.io/tennis-jump)
 
-Originally built as a demo game for Code.org's Game Lab sprite editor.  This version is updated to run on the brand-new [[p5.play v3]](https://molleindustria.github.io/p5.play) library, outside of Game Lab.
+Originally built as a demo game for Code.org's Game Lab sprite editor.  This version is updated to run on the brand-new [p5.play v3](https://molleindustria.github.io/p5.play) library, outside of Game Lab.
 
 Older versions:
   - v5: https://studio.code.org/projects/gamelab/XTiROHdHBhywT7P5D-Y-aA \
