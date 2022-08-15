@@ -122,97 +122,97 @@ function waitForReadyDrawFunction() {
   drawWaitForReadyHUD()
 }
 
-var countdownRemaining, ticksRemainingInCount;
+var countdownRemaining, ticksRemainingInCount
 function startCountdown() {
-  countdownRemaining = 3;
-  ticksRemainingInCount = 30;
-  currentDrawFunction = countdownDrawFunction;
+  countdownRemaining = 3
+  ticksRemainingInCount = 30
+  currentDrawFunction = countdownDrawFunction
 }
 
 function countdownDrawFunction() {
-  ticksRemainingInCount--;
+  ticksRemainingInCount--
   if (ticksRemainingInCount <= 0) {
-    ticksRemainingInCount = 30;
-    countdownRemaining--;
+    ticksRemainingInCount = 30
+    countdownRemaining--
     if (countdownRemaining <= 0) {
-      startGame();
+      startGame()
     }
   }
-  updatePlayer(leftPlayer, 'left player', 1, 'a');
-  updatePlayer(rightPlayer, 'right player', 1, 'l');
+  updatePlayer(leftPlayer, 'left player', 1, 'a')
+  updatePlayer(rightPlayer, 'right player', 1, 'l')
   
-  drawBackground();
-  allSprites.draw();
-  drawCountdownHUD();
+  drawBackground()
+  allSprites.draw()
+  drawCountdownHUD()
 }
 
 function startGame() {
   if (random([1, 2]) === 1) {
-    resetBall(1);
+    resetBall(1)
   } else {
-    resetBall(-1);
+    resetBall(-1)
   }
-  currentDrawFunction = gameplayDrawFunction;
+  currentDrawFunction = gameplayDrawFunction
 }
 
 function gameplayDrawFunction() {
-  updatePlayer(leftPlayer, 'left player', 1, 'a');
-  updatePlayer(rightPlayer, 'right player', 1, 'l');
-  updateBall();
+  updatePlayer(leftPlayer, 'left player', 1, 'a')
+  updatePlayer(rightPlayer, 'right player', 1, 'l')
+  updateBall()
   if (leftScore >= TARGET_SCORE && leftScore - rightScore >= MIN_VICTORY_DELTA
       || rightScore >= TARGET_SCORE && rightScore - leftScore >= MIN_VICTORY_DELTA) {
-    endGame();
+    endGame()
   }
   
-  drawBackground();
-  allSprites.draw();
-  drawHUD();
+  drawBackground()
+  allSprites.draw()
+  drawHUD()
 }
 
 function updatePlayer(sprite, animPrefix, direction, key) {
   if (keyDown(key)) {
-    sprite.velocity.y = -6;
+    sprite.velocity.y = -6
   } else {
-    sprite.velocity.y += 0.4;
+    sprite.velocity.y += 0.4
   }
   if (sprite.y > GROUND_Y_POS - PLAYER_HALF_HEIGHT) {
-    sprite.y = GROUND_Y_POS - PLAYER_HALF_HEIGHT;
-    sprite.velocity.y = 0;
+    sprite.y = GROUND_Y_POS - PLAYER_HALF_HEIGHT
+    sprite.velocity.y = 0
   } else if (sprite.y < PLAYER_HALF_HEIGHT) {
-    sprite.y = PLAYER_HALF_HEIGHT;
-    sprite.velocity.y = 0;
+    sprite.y = PLAYER_HALF_HEIGHT
+    sprite.velocity.y = 0
   }
   
   if (sprite.velocity.y < -1) {
-    setAnimationIfChanged(sprite, animPrefix + ' jump');
+    setAnimationIfChanged(sprite, animPrefix + ' jump')
   } else if (sprite.velocity.y > 1) {
-    setAnimationIfChanged(sprite, animPrefix + ' fall');
+    setAnimationIfChanged(sprite, animPrefix + ' fall')
   } else {
-    setAnimationIfChanged(sprite, animPrefix + ' idle');
+    setAnimationIfChanged(sprite, animPrefix + ' idle')
   }
 }
 
 function setAnimationIfChanged(sprite, name) {
   if (sprite.currentAnimationName !== name) {
-    sprite.currentAnimationName = name;
-    sprite.changeAnimation(name);
+    sprite.currentAnimationName = name
+    sprite.changeAnimation(name)
   }
 }
 
 function updateBall() {
-  ball.velocity.y += 0.1;
+  ball.velocity.y += 0.1
   // Bounce off floor and ceiling
   if (ball.y > GROUND_Y_POS - BALL_HALF_SIZE) {
-    ball.y = GROUND_Y_POS - BALL_HALF_SIZE;
-    ball.velocity.y *= -BALL_BOUNCINESS;
+    ball.y = GROUND_Y_POS - BALL_HALF_SIZE
+    ball.velocity.y *= -BALL_BOUNCINESS
     
     // Account for spin on bounce
-    var spinEffect = ball.rotationSpeed * SPIN_EFFECT;
-    ball.velocity.x += spinEffect;
-    ball.rotationSpeed -= spinEffect;
+    var spinEffect = ball.rotationSpeed * SPIN_EFFECT
+    ball.velocity.x += spinEffect
+    ball.rotationSpeed -= spinEffect
   } else if (ball.y < BALL_HALF_SIZE) {
-    ball.y = BALL_HALF_SIZE;
-    ball.velocity.y *= -1;
+    ball.y = BALL_HALF_SIZE
+    ball.velocity.y *= -1
   }
   
   // Bounce off players
@@ -220,186 +220,186 @@ function updateBall() {
       ball.x > leftPlayer.x &&
       ball.y + BALL_HALF_SIZE > leftPlayer.y - PLAYER_HALF_HEIGHT &&
       ball.y - BALL_HALF_SIZE < leftPlayer.y + PLAYER_HALF_HEIGHT) {
-    ball.x = leftPlayer.x + PLAYER_HALF_WIDTH;
-    ball.velocity.x *= -(1 + BALL_ACCELERATION_FACTOR);
-    ball.velocity.y = leftPlayer.velocity.y;
-    ball.rotationSpeed += -leftPlayer.velocity.y;
+    ball.x = leftPlayer.x + PLAYER_HALF_WIDTH
+    ball.velocity.x *= -(1 + BALL_ACCELERATION_FACTOR)
+    ball.velocity.y = leftPlayer.velocity.y
+    ball.rotationSpeed += -leftPlayer.velocity.y
   } else if (ball.x > rightPlayer.x - PLAYER_HALF_WIDTH &&
       ball.x < rightPlayer.x &&
       ball.y + BALL_HALF_SIZE > rightPlayer.y - PLAYER_HALF_HEIGHT &&
       ball.y - BALL_HALF_SIZE < rightPlayer.y + PLAYER_HALF_HEIGHT) {
-    ball.x = rightPlayer.x - PLAYER_HALF_WIDTH;
-    ball.velocity.x *= -(1 + BALL_ACCELERATION_FACTOR);
-    ball.velocity.y = rightPlayer.velocity.y;
-    ball.rotationSpeed += rightPlayer.velocity.y;
+    ball.x = rightPlayer.x - PLAYER_HALF_WIDTH
+    ball.velocity.x *= -(1 + BALL_ACCELERATION_FACTOR)
+    ball.velocity.y = rightPlayer.velocity.y
+    ball.rotationSpeed += rightPlayer.velocity.y
   }
   
   // Score point if beyond boundary
   if (ball.x < -BALL_HALF_SIZE) {
-    rightScore++;
-    resetBall(1);
+    rightScore++
+    resetBall(1)
   } else if (ball.x > GAME_WIDTH + BALL_HALF_SIZE) {
-    leftScore++;
-    resetBall(-1);
+    leftScore++
+    resetBall(-1)
   }
 }
 
 function endGame() {
   // Move the ball offscreen
-  ball.y = -BALL_SIZE;
-  currentDrawFunction = endGameDrawFunction;
+  ball.y = -BALL_SIZE
+  currentDrawFunction = endGameDrawFunction
 }
 
 function endGameDrawFunction() {
-  updatePlayer(leftPlayer, 'left player', 1, 'a');
-  updatePlayer(rightPlayer, 'right player', 1, 'l');
+  updatePlayer(leftPlayer, 'left player', 1, 'a')
+  updatePlayer(rightPlayer, 'right player', 1, 'l')
   
   if (keyDown('r')) {
-    waitForReady();
+    waitForReady()
   }
   
-  drawBackground();
-  allSprites.draw();
-  drawEndGameHUD();
+  drawBackground()
+  allSprites.draw()
+  drawEndGameHUD()
 }
 
 function resetBall(direction) {
   if (direction === 1) {
-    ball.x = SERVE_INSET_POSITION;
+    ball.x = SERVE_INSET_POSITION
   } else {
-    ball.x = GAME_WIDTH - SERVE_INSET_POSITION;
+    ball.x = GAME_WIDTH - SERVE_INSET_POSITION
   }
-  ball.y = GROUND_Y_POS - 100;
-  ball.velocity.x = SERVE_SPEED_X * direction;
-  ball.velocity.y = -1 + -2 * Math.random();
-  ball.rotationSpeed = 0;
+  ball.y = GROUND_Y_POS - 100
+  ball.velocity.x = SERVE_SPEED_X * direction
+  ball.velocity.y = -1 + -2 * Math.random()
+  ball.rotationSpeed = 0
 }
 
 
 function drawBackground() {
-  background('white');
-  fill('#0a0');
-  noStroke();
-  rect(0, GROUND_Y_POS, GAME_WIDTH, GROUND_HEIGHT);
+  background('white')
+  fill('#0a0')
+  noStroke()
+  rect(0, GROUND_Y_POS, GAME_WIDTH, GROUND_HEIGHT)
 }
 
 function drawWaitForReadyHUD() {
-  textFont('sans');
+  textFont('sans')
   
-  stroke('black');
-  fill('black');
-  textSize(20);
-  textAlign(CENTER, CENTER);
-  text('TENNIS JUMP', 0, 20, GAME_WIDTH, 20);
-  textSize(16);
-  text('Play to ' + TARGET_SCORE, 0, 54, GAME_WIDTH, 16);
+  stroke('black')
+  fill('black')
+  textSize(20)
+  textAlign(CENTER, CENTER)
+  text('TENNIS JUMP', 0, 20, GAME_WIDTH, 20)
+  textSize(16)
+  text('Play to ' + TARGET_SCORE, 0, 54, GAME_WIDTH, 16)
   if (MIN_VICTORY_DELTA > 1) {
-    text('Must win by ' + MIN_VICTORY_DELTA, 0, 80, GAME_WIDTH, 16);
+    text('Must win by ' + MIN_VICTORY_DELTA, 0, 80, GAME_WIDTH, 16)
   }
   
-  stroke(leftReady ? 'red' : 'black');
-  fill(leftReady ? 'red' : 'black');
-  textSize(leftReady ? 24 : 18);
-  textAlign(LEFT, BOTTOM);
-  text(leftReady ? 'READY!' : 'Ready?', 10, GAME_HEIGHT / 2 - 50, 180, 30);
+  stroke(leftReady ? 'red' : 'black')
+  fill(leftReady ? 'red' : 'black')
+  textSize(leftReady ? 24 : 18)
+  textAlign(LEFT, BOTTOM)
+  text(leftReady ? 'READY!' : 'Ready?', 10, GAME_HEIGHT / 2 - 50, 180, 30)
   
-  stroke(rightReady ? 'blue' : 'black');
-  fill(rightReady ? 'blue' : 'black');
-  textSize(rightReady ? 24 : 18);
-  textAlign(RIGHT, BOTTOM);
-  text(rightReady ? 'READY!' : 'Ready?', GAME_WIDTH - 190, GAME_HEIGHT / 2 - 50, 180, 30);
+  stroke(rightReady ? 'blue' : 'black')
+  fill(rightReady ? 'blue' : 'black')
+  textSize(rightReady ? 24 : 18)
+  textAlign(RIGHT, BOTTOM)
+  text(rightReady ? 'READY!' : 'Ready?', GAME_WIDTH - 190, GAME_HEIGHT / 2 - 50, 180, 30)
   
-  drawActionText('READY');
+  drawActionText('READY')
 }
 
-var displayedCountdown, fontSize = 40;
+var displayedCountdown, fontSize = 40
 function drawCountdownHUD() {
   if (countdownRemaining != displayedCountdown) {
-    displayedCountdown = countdownRemaining;
-    fontSize = 100;
+    displayedCountdown = countdownRemaining
+    fontSize = 100
   } else {
-    fontSize--;
+    fontSize--
   }
   
   if (fontSize > 0) {
-    textFont('sans');
-    stroke('black');
-    fill('black');
-    textSize(fontSize);
-    textAlign(CENTER, CENTER);
-    text(displayedCountdown, 0, 0, GAME_WIDTH, GAME_HEIGHT);
+    textFont('sans')
+    stroke('black')
+    fill('black')
+    textSize(fontSize)
+    textAlign(CENTER, CENTER)
+    text(displayedCountdown, 0, 0, GAME_WIDTH, GAME_HEIGHT)
   }
   
-  drawScores();
-  drawActionText('JUMP');
+  drawScores()
+  drawActionText('JUMP')
 }
 
 function drawHUD() {
-  drawScores();  
-  drawActionText('JUMP');
+  drawScores()  
+  drawActionText('JUMP')
   
   // Show 'MATCH POINT' text if the next point could win
   if (leftScore + 1 >= TARGET_SCORE && leftScore + 1 - rightScore >= MIN_VICTORY_DELTA
       || rightScore + 1 >= TARGET_SCORE && rightScore + 1 - leftScore >= MIN_VICTORY_DELTA) {
-    drawTopCenterText('MATCH POINT');
+    drawTopCenterText('MATCH POINT')
   }
 }
 
-var oscillator = 20;
+var oscillator = 20
 function drawEndGameHUD() {
-  oscillator--;
+  oscillator--
   if (oscillator <= -20) {
-    oscillator = 20;
+    oscillator = 20
   }
   
-  var leftWins = leftScore > rightScore;
-  textFont('sans');
-  stroke(leftWins ? 'red' : 'blue');
-  fill(leftWins ? 'red' : 'blue');
-  textSize(40 + Math.abs(oscillator));
-  textAlign(CENTER, CENTER);
-  text((leftWins ? 'RED' : 'BLUE') + ' WINS', 0, 0, GAME_WIDTH, GROUND_Y_POS);
+  var leftWins = leftScore > rightScore
+  textFont('sans')
+  stroke(leftWins ? 'red' : 'blue')
+  fill(leftWins ? 'red' : 'blue')
+  textSize(40 + Math.abs(oscillator))
+  textAlign(CENTER, CENTER)
+  text((leftWins ? 'RED' : 'BLUE') + ' WINS', 0, 0, GAME_WIDTH, GROUND_Y_POS)
  
-  stroke('black');
-  fill('black');
-  textAlign(CENTER, CENTER);
-  textSize(16);
-  text('Press "R" to restart', 0, GAME_HEIGHT / 2, GAME_WIDTH, 16);
+  stroke('black')
+  fill('black')
+  textAlign(CENTER, CENTER)
+  textSize(16)
+  text('Press "R" to restart', 0, GAME_HEIGHT / 2, GAME_WIDTH, 16)
     
-  drawScores();
-  drawTopCenterText('FINAL SCORE');
+  drawScores()
+  drawTopCenterText('FINAL SCORE')
 }
 
 function drawScores() {
   // Draw scores in corners
-  textFont('sans');
-  textSize(20);
-  stroke('red');
-  fill('red');
-  textAlign(LEFT, TOP);
-  text(leftScore, 10, 10, 100, 100);
-  stroke('blue');
-  fill('blue');
-  textAlign(RIGHT, TOP);
-  text(rightScore, GAME_WIDTH - 110, 10, 100, 100);
+  textFont('sans')
+  textSize(20)
+  stroke('red')
+  fill('red')
+  textAlign(LEFT, TOP)
+  text(leftScore, 10, 10, 100, 100)
+  stroke('blue')
+  fill('blue')
+  textAlign(RIGHT, TOP)
+  text(rightScore, GAME_WIDTH - 110, 10, 100, 100)
 }
 
 function drawTopCenterText(txt) {
-  textFont('sans');
-  textSize(20);
-  stroke('black');
-  fill('black');
-  textAlign(CENTER, TOP);
-  text(txt, 0, 10, GAME_WIDTH, 20);
+  textFont('sans')
+  textSize(20)
+  stroke('black')
+  fill('black')
+  textAlign(CENTER, TOP)
+  text(txt, 0, 10, GAME_WIDTH, 20)
 }
 
 function drawActionText(actionText) {
-  textFont('sans');
-  stroke('white');
-  fill('white');
-  textSize(18);
-  textAlign('left', 'bottom');
-  text("A : " + actionText, 10, GAME_HEIGHT - 30, 180, 20);
-  textAlign('right', 'bottom');
-  text(actionText + " : L", GAME_WIDTH - 190, GAME_HEIGHT - 30, 180, 20);
+  textFont('sans')
+  stroke('white')
+  fill('white')
+  textSize(18)
+  textAlign('left', 'bottom')
+  text("A : " + actionText, 10, GAME_HEIGHT - 30, 180, 20)
+  textAlign('right', 'bottom')
+  text(actionText + " : L", GAME_WIDTH - 190, GAME_HEIGHT - 30, 180, 20)
 }
