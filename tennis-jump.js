@@ -105,11 +105,11 @@ function waitForReady() {
 }
 
 function waitForReadyDrawFunction() {
-  if (keyDown('a')) {
+  if (kb.pressing('a')) {
     leftReady = true
   }
   
-  if (keyDown('l')) {
+  if (kb.pressing('l')) {
     rightReady = true
   }
   
@@ -170,7 +170,7 @@ function gameplayDrawFunction() {
 }
 
 function updatePlayer(sprite, animPrefix, direction, key) {
-  if (keyDown(key)) {
+  if (kb.pressing(key)) {
     sprite.velocity.y = -6
   } else {
     sprite.velocity.y += 0.4
@@ -254,7 +254,7 @@ function endGameDrawFunction() {
   updatePlayer(leftPlayer, 'left player', 1, 'a')
   updatePlayer(rightPlayer, 'right player', 1, 'l')
   
-  if (keyDown('r')) {
+  if (kb.pressing('r')) {
     waitForReady()
   }
   
